@@ -1,0 +1,9 @@
+# ide
+.idea/
+
+# OSX specific files
+*.DS_Store
+
+# executables
+bin/
+
