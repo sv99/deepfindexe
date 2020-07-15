@@ -79,7 +79,7 @@ func Pptx(in []byte) bool {
 //
 // https://en.wikipedia.org/wiki/Object_Linking_and_Embedding
 func Ole(in []byte) bool {
-	return bytes.HasPrefix(in, []byte{0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1})
+	return len(in) > 8 && bytes.HasPrefix(in, []byte{0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1})
 }
 
 // Doc matches a Microsoft Word 97-2003 file.

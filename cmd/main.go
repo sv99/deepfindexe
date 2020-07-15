@@ -3,16 +3,17 @@ package main
 import (
 	"deepfindexe"
 	"fmt"
-	"github.com/jessevdk/go-flags"
+	"github.com/sv99/go-flags"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
 func main()  {
 	var opts deepfindexe.Options
 	var parser = flags.NewParser(&opts, flags.Default)
-	parser.Usage = "[OPTIONS] file"
 
-	args, err := parser.Parse()
+	_, err := parser.Parse()
 	if err != nil {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
 			os.Exit(2)
@@ -24,11 +25,14 @@ func main()  {
 		}
 	}
 
-	if len(args) == 0 {
-		parser.WriteHelp(os.Stderr)
-		os.Exit(2)
+	// if not provided optional filename - make it from path
+	if opts.Positional.Filename == "" {
+		opts.Positional.Filename = filepath.Base(opts.Positional.Filepath)
 	}
-	res, err := deepfindexe.Find(args[0], opts.Verbose)
+	// prepare ExtensionArray
+	opts.ExtensionArray = strings.Split(opts.Extensions, "|")
+
+	res, err := deepfindexe.Find(&opts)
 	if err != nil {
 		if opts.Verbose {
 			fmt.Println(err.Error())

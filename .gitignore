@@ -4,6 +4,9 @@
 # OSX specific files
 *.DS_Store
 
+# test data
+testdata/
+
 # executables
 bin/
 

@@ -115,9 +115,14 @@ func ArchiveByExtension(filename string) (interface{}, error) {
 }
 
 func ExtEqualsAny(filename string, extensions []string) bool {
-	ext := filepath.Ext(filename)[1:]
+	ext := filepath.Ext(filename)
+	// check if ext exists
+	if len(ext) == 0 {
+		return false
+	}
+	ext1 := ext[1:]
 	for _, e := range extensions {
-		if e == ext {
+		if e == ext1 {
 			return true
 		}
 	}

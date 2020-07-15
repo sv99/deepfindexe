@@ -20,7 +20,7 @@ func classOrMachOFat(in []byte) bool {
 
 // Class matches a java class file.
 func Class(in []byte) bool {
-	return classOrMachOFat(in) && in[7] > 30
+	return len(in) > 8 && classOrMachOFat(in) && in[7] > 30
 }
 
 // MachO matches Mach-O binaries format.
@@ -41,14 +41,14 @@ func MachO(in []byte) bool {
 
 // Swf matches an Adobe Flash swf file.
 func Swf(in []byte) bool {
-	return bytes.HasPrefix(in, []byte("CWS")) ||
+	return len(in) > 3 && bytes.HasPrefix(in, []byte("CWS")) ||
 		bytes.HasPrefix(in, []byte("FWS")) ||
 		bytes.HasPrefix(in, []byte("ZWS"))
 }
 
 // Wasm matches a web assembly File Format file.
 func Wasm(in []byte) bool {
-	return bytes.HasPrefix(in, []byte{0x00, 0x61, 0x73, 0x6D})
+	return len(in) > 4 && bytes.HasPrefix(in, []byte{0x00, 0x61, 0x73, 0x6D})
 }
 
 // Dbf matches a dBase file.
@@ -79,47 +79,47 @@ func Dbf(in []byte) bool {
 
 // Exe matches a Windows/DOS executable file.
 func Exe(in []byte) bool {
-	return bytes.HasPrefix(in, []byte{0x4D, 0x5A})
+	return len(in) > 2 && bytes.HasPrefix(in, []byte{0x4D, 0x5A})
 }
 
 // Elf matches an Executable and Linkable Format file.
 func Elf(in []byte) bool {
-	return bytes.HasPrefix(in, []byte{0x7F, 0x45, 0x4C, 0x46})
+	return len(in) > 4 && bytes.HasPrefix(in, []byte{0x7F, 0x45, 0x4C, 0x46})
 }
 
 // ElfObj matches an object file.
 func ElfObj(in []byte) bool {
-	return len(in) > 17 && ((in[16] == 0x01 && in[17] == 0x00) ||
+	return len(in) > 18 && ((in[16] == 0x01 && in[17] == 0x00) ||
 		(in[16] == 0x00 && in[17] == 0x01))
 }
 
 // ElfExe matches an executable file.
 func ElfExe(in []byte) bool {
-	return len(in) > 17 && ((in[16] == 0x02 && in[17] == 0x00) ||
+	return len(in) > 18 && ((in[16] == 0x02 && in[17] == 0x00) ||
 		(in[16] == 0x00 && in[17] == 0x02))
 }
 
 // ElfLib matches a shared library file.
 func ElfLib(in []byte) bool {
-	return len(in) > 17 && ((in[16] == 0x03 && in[17] == 0x00) ||
+	return len(in) > 18 && ((in[16] == 0x03 && in[17] == 0x00) ||
 		(in[16] == 0x00 && in[17] == 0x03))
 }
 
 // ElfDump matches a core dump file.
 func ElfDump(in []byte) bool {
-	return len(in) > 17 && ((in[16] == 0x04 && in[17] == 0x00) ||
+	return len(in) > 18 && ((in[16] == 0x04 && in[17] == 0x00) ||
 		(in[16] == 0x00 && in[17] == 0x04))
 }
 
 // Dcm matches a DICOM medical format file.
 func Dcm(in []byte) bool {
-	return len(in) > 131 &&
+	return len(in) > 132 &&
 		bytes.Equal(in[128:132], []byte{0x44, 0x49, 0x43, 0x4D})
 }
 
 // Nes matches a Nintendo Entertainment system ROM file.
 func Nes(in []byte) bool {
-	return bytes.HasPrefix(in, []byte{0x4E, 0x45, 0x53, 0x1A})
+	return len(in) > 4 && bytes.HasPrefix(in, []byte{0x4E, 0x45, 0x53, 0x1A})
 }
 
 // Marc matches a MARC21 (MAchine-Readable Cataloging) file.

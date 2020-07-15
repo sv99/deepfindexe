@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 	"strings"
 )
 
@@ -51,39 +50,32 @@ var execExtensions = []string{
 
 // Find first executable in the archive.
 // Return error with file name executable in the message.
-func Find(fileName  string, verbose bool) (string, error) {
-	file, err := os.Open(fileName)
+func Find(opts *Options) (string, error) {
+	// check file extension
+	if opts.Positional.Filename != "" {
+		// detected executable attachments
+		det := ExtEqualsAny(opts.Positional.Filename, opts.ExtensionArray)
+		if det {
+			return opts.Positional.Filename, nil
+		}
+	}
+
+	file, err := os.Open(opts.Positional.Filepath)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return "", err
 	}
 	defer file.Close()
 
 	buf, err := ioutil.ReadAll(file)
 	if err != nil {
-		fmt.Println(err.Error())
-		os.Exit(1)
+		return "", err
 	}
 
 	res, err := Walk(File{
-		FileName: filepath.Base(fileName),
+		FileName: opts.Positional.Filename,
 		Buf: &buf,
-	}, 0, verbose)
+	}, 0, opts)
 	return res, err
-}
-
-func DetectExecutable(f File) (bool, *mimetype.MIME) {
-	// first step detect executable by ext
-	det := ExtEqualsAny(f.FileName, execExtensions)
-	if det {
-		return true, nil
-	}
-	// second step detect executable by mime
-	mime := mimetype.Detect(*f.Buf)
-	if mimetype.EqualsAny(mime.String(), execMimes...) {
-		return true, nil
-	}
-	return false, mime
 }
 
 // pretty indent for internal archives
@@ -92,12 +84,12 @@ func indent(level int) string {
 }
 
 // check file and detect executable
-func Walk(f File, level int, verbose bool) (string, error) {
+func Walk(f File, level int, opts *Options) (string, error) {
 	// first step detect executable by ext
 	// base check - file must have extension executable in the Explorer!!
-	det := ExtEqualsAny(f.FileName, execExtensions)
+	det := ExtEqualsAny(f.FileName, opts.ExtensionArray)
 	if det {
-		if verbose {
+		if opts.Verbose {
 			fmt.Println(indent(level) + "Executable:", f.FileName)
 		}
 		return f.FileName, nil
@@ -105,7 +97,7 @@ func Walk(f File, level int, verbose bool) (string, error) {
 	// second step detect executable by mime
 	mime := mimetype.Detect(*f.Buf)
 	if mimetype.EqualsAny(mime.String(), execMimes...) {
-		if verbose {
+		if opts.Verbose {
 			fmt.Println(indent(level) + "Executable:", f.FileName, mime.String())
 		}
 		return f.FileName, nil
@@ -116,13 +108,13 @@ func Walk(f File, level int, verbose bool) (string, error) {
 		if mimetype.EqualsAny(mime.String(), archiveMimes...) {
 			a, err = ArchiveByMime(mime)
 			if err != nil {
-				if verbose {
+				if opts.Verbose {
 					fmt.Println(indent(level) + "File:", f.FileName, mime.String())
 				}
 				return "", err
 			}
 		} else {
-			if verbose {
+			if opts.Verbose {
 				fmt.Println(indent(level) + "File:", f.FileName, mime.String())
 			}
 			return "", nil
@@ -130,7 +122,7 @@ func Walk(f File, level int, verbose bool) (string, error) {
 	}
 	defer a.(Closeable).Close()
 
-	if verbose {
+	if opts.Verbose {
 		fmt.Println(indent(level) + "Archive:", f.FileName, mime.String())
 	}
 	w, ok := a.(WalkerByMime)
@@ -143,22 +135,22 @@ func Walk(f File, level int, verbose bool) (string, error) {
 		mime = mimetype.Detect(*f.Buf)
 		if mimetype.EqualsAny(mime.String(), archiveMimes...) {
 			// find internal archive
-			res, err = Walk(f, level + 1, verbose)
+			res, err = Walk(f, level + 1, opts)
 			if err != nil {
 				return err
 			}
 		} else {
 			// archive item detect executable
-			if ExtEqualsAny(f.FileName, execExtensions) || mimetype.EqualsAny(
+			if ExtEqualsAny(f.FileName, opts.ExtensionArray) || mimetype.EqualsAny(
 				mime.String(), execMimes...) {
 				res = f.FileName
-				if verbose {
+				if opts.Verbose {
 					fmt.Println(indent(level + 1) + "Executable", f.FileName, mime.String())
 				}
 				// stop walking
 				return nil
 			} else {
-				if verbose {
+				if opts.Verbose {
 					fmt.Println(indent(level + 1) + "File:", f.FileName, mime.String())
 				}
 			}
