@@ -1,10 +1,10 @@
 deepfindexe
 ===========
 
-Detect executable in the mail attachments.
+deepfindexe detect executable in the mail attachments.
 
-Have scan recursive archive like `zip->rar->xx.exe`.
-Detect executable by extension and by mime.
+It have scan recursive archive like `zip->rar->xx.exe`.
+It detect executable by extension and by mime.
 
 It support passworded zip and rar.
 
