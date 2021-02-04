@@ -6,6 +6,8 @@ Detect executable in the mail attachments.
 Have scan recursive archive like `zip->rar->xx.exe`.
 Detect executable by extension and by mime.
 
+It support passworded zip and rar.
+
 ```bash
 ./bin/Darwin/deepfindexe -h
 Usage:
