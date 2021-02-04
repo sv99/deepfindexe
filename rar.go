@@ -96,6 +96,11 @@ func (r *Rar) WalkByMime(f File, walkFn WalkFunc) error {
 				log.Printf("[ERROR] Opening next file: %v", err)
 				continue
 			}
+			// ignore error for passworded rar
+			if err.Error() == "rardecode: bad file checksum" {
+				log.Printf("[ERROR] read passworded rar file: %v", err)
+				continue
+			}
 			return fmt.Errorf("opening next file: %v", err)
 		}
 		err = walkFn(f)

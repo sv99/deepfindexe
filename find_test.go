@@ -63,3 +63,20 @@ func TestFindRecursiveArchive(t *testing.T) {
 	}
 }
 
+func TestFindPasswordedArchive(t *testing.T) {
+	for _, tc := range []string{
+		"rar_with_pass.rar",
+		"zip_with_pass.zip",
+	} {
+		fn := TestDir + tc
+		opts := DefOptions(fn)
+		res, err := Find(opts)
+		if err != nil {
+			t.Errorf("Test Find error on %s %s", fn, err.Error())
+		}
+		fmt.Println(fn, res, opts)
+		//if filepath.Base(res) != item {
+		//	t.Errorf("Find not detect executable in %s: %s", fn, res)
+		//}
+	}
+}

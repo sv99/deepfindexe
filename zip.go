@@ -137,6 +137,11 @@ func (z *Zip) WalkByMime(f File, walkFn WalkFunc) error {
 
 		buf, err := ioutil.ReadAll(zfrc)
 		if err != nil {
+			// ignore error for passworded zip
+			if err == flate.CorruptInputError(4) {
+				log.Printf("[ERROR] read passworded zip file: %v", err)
+				continue
+			}
 			return err // don't wrap error; preserve io.EOF
 		}
 		_ = zfrc.Close()

@@ -53,6 +53,7 @@ acl_check_mime:
     Определение формата по расширению. Взял Walker and decoder.
 2. `github.com/gabriel-vasile/mimetype` - определения типа файла по `mime` - оставил определение
     архивов и исполняемых файлов.
+3. `github.com/nwaples/rardecode`
 
 References
 ----------
