@@ -17,6 +17,7 @@ type Positional struct {
 }
 
 type Options struct {
+	Version 	bool	`long:"version" description:"Show version"`
 	Verbose		bool	`short:"v" long:"verbose" description:"Show verbose debug information"`
 	Extensions	string 	`short:"e" long:"ext" description:"Executable extensions" default:"ade|adp|asd|bas|bat|cab|chm|cmd|com|cpl|crt|dll|exe|hlp|hta|inf|ins|isp|jse|jar|lib|lnk|mdb|mde|mdz|msc|msi|msp|mst|ole|ocx|pcd|pif|reg|scr|sct|shs|shb|sys|url|vbe|vbs|vxd|wsc|wsf|wsh"`
 	// stripped by | Extensions param
@@ -26,6 +27,7 @@ type Options struct {
 
 func DefOptions(filepath string) *Options {
 	opts := Options{
+		Version:	false,
 		Verbose:    false,
 		Extensions: executables,
 		Positional: Positional{

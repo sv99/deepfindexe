@@ -15,12 +15,12 @@ type File struct {
 	Buf *[]byte
 }
 
-/// Detect file mime with store position in the file
+// / Detect file mime with store position in the file
 func (f File) Detect() *mimetype.MIME {
 	return mimetype.Detect(*f.Buf)
 }
 
-type Archive struct{
+type Archive struct {
 	WalkerByMime
 	Closeable
 }
@@ -74,7 +74,10 @@ func ArchiveByMime(mime *mimetype.MIME) (interface{}, error) {
 		return NewZstd(), nil
 	} else if mime.Is("application/x-snappy-framed") {
 		return NewSnappy(), nil
+	} else if mime.Is("application/x-7z-compressed") {
+		return NewSevenZip(), nil
 	}
+
 	return nil, fmt.Errorf("format unrecognized by mime: %s", mime.String())
 }
 
@@ -83,8 +86,7 @@ func ArchiveByMime(mime *mimetype.MIME) (interface{}, error) {
 func ArchiveByExtension(filename string) (interface{}, error) {
 	if strings.HasSuffix(filename, ".tar.gz") {
 		return NewTarGz(), nil
-	} else if
-	strings.HasSuffix(filename, ".tgz") {
+	} else if strings.HasSuffix(filename, ".tgz") {
 		return NewTarGz(), nil
 	} else if strings.HasSuffix(filename, ".tar.bz2") {
 		return NewTarBz2(), nil

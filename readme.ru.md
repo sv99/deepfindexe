@@ -57,6 +57,7 @@ acl_check_mime:
 2. `github.com/gabriel-vasile/mimetype` - определения типа файла по `mime` - оставил определение
     архивов и исполняемых файлов.
 3. `github.com/nwaples/rardecode`
+4. `github.com/bodgit/sevenzip`
 
 References
 ----------

@@ -5,8 +5,8 @@
 *.DS_Store
 
 # test data
-testdata/
-
+testdata/test*
+testdata/scan
 # executables
 bin/
 

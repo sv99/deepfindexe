@@ -27,6 +27,7 @@ var testSuffix = []string{
 	".xz",
 	".zip",
 	".zst",
+	".7z",
 }
 
 func TestFindExe(t *testing.T) {
@@ -54,12 +55,32 @@ func testFindItem(t *testing.T, item string, suffix string) {
 	}
 }
 
+func checkArchive(t *testing.T, item string) {
+	fn := TestDir + item
+	opts := DefOptions(fn)
+	res, err := Find(opts)
+	if err != nil {
+		t.Errorf("Check archive error on %s %s", fn, err.Error())
+	}
+	fmt.Println(fn, res, opts)
+}
+
 func TestFindRecursiveArchive(t *testing.T) {
 	for _, tc := range []string{
-		".zip.rar",
-		".rar.zip",
+		".recursive.rar",
+		".recursive.zip",
+		".recursive.7z",
 	} {
 		testFindItem(t, "test.exe", tc)
+	}
+}
+
+func TestCheckSevenZipArchive(t *testing.T) {
+	for _, tc := range []string{
+		"sevenzip_20210817.7z",
+		"sevenzip_20240320.7z",
+	} {
+		checkArchive(t, tc)
 	}
 }
 
@@ -68,15 +89,6 @@ func TestFindPasswordedArchive(t *testing.T) {
 		"rar_with_pass.rar",
 		"zip_with_pass.zip",
 	} {
-		fn := TestDir + tc
-		opts := DefOptions(fn)
-		res, err := Find(opts)
-		if err != nil {
-			t.Errorf("Test Find error on %s %s", fn, err.Error())
-		}
-		fmt.Println(fn, res, opts)
-		//if filepath.Base(res) != item {
-		//	t.Errorf("Find not detect executable in %s: %s", fn, res)
-		//}
+		checkArchive(t, tc)
 	}
 }

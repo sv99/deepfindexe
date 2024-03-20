@@ -3,13 +3,13 @@
 DEST := 'deepfindexe'
 
 build:
-	@-GOOS=darwin GOARCH=amd64 go build -i -o bin/Darwin/${DEST} ./cmd/main.go
-	@-GOOS=linux GOARCH=amd64 go build -i -o bin/Linux/${DEST} ./cmd/main.go
-	@-GOOS=windows GOARCH=amd64 go build -i -o bin/Windows/${DEST}.exe ./cmd/main.go
+	@-GOOS=darwin GOARCH=amd64 go build -o bin/Darwin/${DEST} ./cmd/main.go
+	@-GOOS=linux GOARCH=amd64 go build -o bin/Linux/${DEST} ./cmd/main.go
+	@-GOOS=windows GOARCH=amd64 go build -o bin/Windows/${DEST}.exe ./cmd/main.go
 
 # for regenerate test data
-# brew install brotli lz4 xz snzip zstd
-# brew cask install rar
+# brew install brotli lz4 xz snzip zstd p7zip
+# brew install --cask rar
 maketestdata: clean
 	@-cd testdata && \
 	echo "test bat" > test.bat && \
@@ -26,7 +26,8 @@ maketestdata: clean
 	snzip -k test.bat && \
 	zstd -q test.bat && \
 	brotli test.bat && \
-	rar a -inul test.bat.rar test.bat
+	rar a -inul test.bat.rar test.bat && \
+	7z a test.bat.7z test.bat > /dev/null
 	@-echo bat single level compression
 
 	@-cd testdata && \
@@ -39,7 +40,8 @@ maketestdata: clean
 	snzip -k test.exe && \
 	zstd -q test.exe && \
 	brotli test.exe && \
-    rar a -inul test.exe.rar test.exe
+    rar a -inul test.exe.rar test.exe && \
+    7z a test.exe.7z test.exe > /dev/null
 	@-echo exe single level compression
 
 	@-cd testdata && \
@@ -51,7 +53,8 @@ maketestdata: clean
 	snzip -k test.bat.tar && \
 	zstd -q test.bat.tar && \
 	brotli test.bat.tar && \
-    rar a -inul test.bat.tar.rar test.bat.tar
+    rar a -inul test.bat.tar.rar test.bat.tar && \
+    7z a test.bat.tar.7z test.bat.tar > /dev/null
 	@-echo bat with tar
 
 	@-cd testdata && \
@@ -63,12 +66,14 @@ maketestdata: clean
 	snzip -k test.exe.tar && \
 	zstd -q test.exe.tar && \
 	brotli test.exe.tar && \
-    rar a -inul test.exe.tar.rar test.exe.tar
+    rar a -inul test.exe.tar.rar test.exe.tar && \
+    7z a test.exe.tar.rar.7z test.exe.tar > /dev/null
 	@-echo exe with tar
 
 	@-cd testdata && \
-	zip -q test.exe.rar.zip test.exe.rar && \
-	rar a -inul test.exe.zip.rar test.exe.zip
+	zip -q test.exe.recursive.zip test.exe.rar && \
+	rar a -inul test.exe.recursive.rar test.exe.zip && \
+    7z a test.exe.recursive.7z test.exe.zip > /dev/null
 	@-echo exe second level
 
 clean:
