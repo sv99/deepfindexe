@@ -1,7 +1,7 @@
 package deepfindexe
 
 import (
-	"github.com/pierrec/lz4/v3"
+	"github.com/pierrec/lz4/v4"
 	"io"
 )
 

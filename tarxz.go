@@ -1,7 +1,7 @@
 package deepfindexe
 
 import (
-	fastxz "github.com/xi2/xz"
+	fastxz "github.com/ulikunitz/xz"
 	"io"
 )
 
@@ -12,7 +12,7 @@ type TarXz struct {
 	*Tar
 }
 
-// Walk calls walkFn for each visited item in archive.
+// WalkByMime calls walkFn for each visited item in archive.
 func (txz *TarXz) WalkByMime(f File, walkFn WalkFunc) error {
 	txz.wrapReader()
 	return txz.Tar.WalkByMime(f, walkFn)
@@ -29,7 +29,7 @@ func (txz *TarXz) wrapReader() {
 	var xzr *fastxz.Reader
 	txz.Tar.readerWrapFn = func(r io.Reader) (io.Reader, error) {
 		var err error
-		xzr, err = fastxz.NewReader(r, 0)
+		xzr, err = fastxz.NewReader(r)
 		return xzr, err
 	}
 }

@@ -2,9 +2,8 @@ package deepfindexe
 
 import (
 	"bytes"
-	fastxz "github.com/xi2/xz"
+	fastxz "github.com/ulikunitz/xz"
 	"io"
-	"io/ioutil"
 )
 
 // Xz facilitates XZ compression.
@@ -12,7 +11,7 @@ type Xz struct{}
 
 // Decompress reads in, decompresses it, and writes it to out.
 func (x *Xz) Decompress(in io.Reader, out io.Writer) error {
-	r, err := fastxz.NewReader(in, 0)
+	r, err := fastxz.NewReader(in)
 	if err != nil {
 		return err
 	}
@@ -22,19 +21,19 @@ func (x *Xz) Decompress(in io.Reader, out io.Writer) error {
 
 // WalkByMime calls walkFn for each visited item in archive.
 func (gz *Xz) WalkByMime(f File, walkFn WalkFunc) error {
-	r, err := fastxz.NewReader(bytes.NewReader(*f.Buf), 0)
+	r, err := fastxz.NewReader(bytes.NewReader(*f.Buf))
 	if err != nil {
 		return err
 	}
 
-	newBuf, err :=  ioutil.ReadAll(r)
+	newBuf, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
 
 	err = walkFn(File{
 		FileName: TrimSuffix(f.FileName),
-		Buf: &newBuf,
+		Buf:      &newBuf,
 	})
 	return err
 }

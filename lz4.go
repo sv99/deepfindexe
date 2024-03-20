@@ -2,7 +2,7 @@ package deepfindexe
 
 import (
 	"bytes"
-	"github.com/pierrec/lz4/v3"
+	"github.com/pierrec/lz4/v4"
 	"io"
 	"io/ioutil"
 )
@@ -23,14 +23,14 @@ func (lz *Lz4) Decompress(in io.Reader, out io.Writer) error {
 func (gz *Lz4) WalkByMime(f File, walkFn WalkFunc) error {
 	r := lz4.NewReader(bytes.NewReader(*f.Buf))
 
-	newBuf, err :=  ioutil.ReadAll(r)
+	newBuf, err := ioutil.ReadAll(r)
 	if err != nil {
 		return err
 	}
 
 	err = walkFn(File{
 		FileName: TrimSuffix(f.FileName),
-		Buf: &newBuf,
+		Buf:      &newBuf,
 	})
 	return err
 }
